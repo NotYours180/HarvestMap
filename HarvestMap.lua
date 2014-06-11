@@ -282,13 +282,6 @@ function Harvest.OnLootReceived( eventCode, receivedBy, objectName, stackCount, 
         end
         return
     end
-    
-    --[[
-    local testName = Harvest.GetItemNameFromItemID(link.id)
-    local testItemID = Harvest.GetItemIDFromItemName(Harvest.nodeName)
-    d("The test node name was : " .. testName)
-    d("The test node itemID was : " .. testItemID)
-    ]]--
 
     -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale
     Harvest.saveData("nodes", zone, x, y, profession, Harvest.nodeName, link.id, nil )
@@ -608,8 +601,8 @@ function Harvest.alreadyFound(type, zone, x, y, profession, nodeName, scale, cou
         dy = entry[2] - y
         -- (x - center_x)2 + (y - center_y)2 = r2, where center is the player
         dist = math.pow(dx, 2) + math.pow(dy, 2)
-        dist2 = dx * dx + dy * dy
-        Harvest.Debug(dist .. " : " .. dist2)
+        -- dist2 = dx * dx + dy * dy
+        -- Harvest.Debug(dist .. " : " .. dist2)
         if dist < distance then -- near player location
             if not Harvest.duplicateName(entry[3], nodeName) then
                 local nodeFound = Harvest.returnNameFound(entry[3], nodeName)
@@ -969,6 +962,10 @@ function Harvest.OnLoad(eventCode, addOnName)
         Harvest.updateHarvestNodes("esonodes")
         Harvest.updateHarvestNodes("esoinvalid")
         Harvest.defaults.dataVersion = Harvest.dataVersion
+    end
+
+    if Harvest.defaults.internalVersion ~= Harvest.internalVersion then
+        Harvest.defaults.internalVersion = Harvest.internalVersion
     end
 
     Harvest.InitializeMapMarkers()
