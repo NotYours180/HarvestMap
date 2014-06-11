@@ -3,7 +3,58 @@ Harvest.chestID = 6
 Harvest.fishID = 8
 
 Harvest.internalVersion = 3
-Harvest.dataVersion = 1
+Harvest.dataVersion = 5
+
+-----------------------------------------
+--           Debug Logger              --
+-----------------------------------------
+
+local function EmitMessage(text)
+    if(CHAT_SYSTEM)
+    then
+        if(text == "")
+        then
+            text = "[Empty String]"
+        end
+
+        CHAT_SYSTEM:AddMessage(text)
+    end
+end
+
+local function EmitTable(t, indent, tableHistory)
+    indent          = indent or "."
+    tableHistory    = tableHistory or {}
+
+    for k, v in pairs(t)
+    do
+        local vType = type(v)
+
+        EmitMessage(indent.."("..vType.."): "..tostring(k).." = "..tostring(v))
+
+        if(vType == "table")
+        then
+            if(tableHistory[v])
+            then
+                EmitMessage(indent.."Avoiding cycle on table...")
+            else
+                tableHistory[v] = true
+                EmitTable(v, indent.."  ", tableHistory)
+            end
+        end
+    end
+end
+
+function Harvest.Debug(...)
+    for i = 1, select("#", ...) do
+        local value = select(i, ...)
+        if(type(value) == "table")
+        then
+            EmitTable(value)
+        else
+            EmitMessage(tostring (value))
+        end
+    end
+end
 
 -----------------------------------------
 --          String Formatting          --
@@ -231,6 +282,13 @@ function Harvest.OnLootReceived( eventCode, receivedBy, objectName, stackCount, 
         end
         return
     end
+    
+    --[[
+    local testName = Harvest.GetItemNameFromItemID(link.id)
+    local testItemID = Harvest.GetItemIDFromItemName(Harvest.nodeName)
+    d("The test node name was : " .. testName)
+    d("The test node itemID was : " .. testItemID)
+    ]]--
 
     -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale
     Harvest.saveData("nodes", zone, x, y, profession, Harvest.nodeName, link.id, nil )
@@ -409,9 +467,9 @@ function Harvest.saveMapName(currentMap)
     --d("TextureA : " .. textureNameA)
     --d("TextureB : " .. textureNameB)
     --d("Zone : " .. zone .. " : Subzone : " .. subzone .. " : location : " ..  location .. " : mapZone : " .. mapZone .. " : unitZone : " .. unitZone .. " : zoneIndex : " .. zoneIndex .. " : " .. mapIndex .. " : " .. mapType .. " : " .. mapContentType .. " : " .. mapWidth .. " : " .. mapHeight .. " : " .. dimensionsX .. " : " .. dimensionsY)
-    
+
     data = { currentMap, textureNameA, zone , subzone, location, mapZone , unitZone , zoneIndex, mapIndex, mapType, mapContentType, mapWidth, mapHeight, dimensionsX, dimensionsY, categoryName, categoryIndex, mapInfoName, mapInfoIndex }
-    
+
     local savemapdata = true
     for index, maps in pairs(Harvest.savedVars["mapnames"].data) do
         for _, map in pairs(maps) do
@@ -425,7 +483,7 @@ function Harvest.saveMapName(currentMap)
             end
         end
     end
-    
+
     if savemapdata then
         if Harvest.savedVars["mapnames"].data[textureNameB] == nil then
             Harvest.savedVars["mapnames"].data[textureNameB] = {}
@@ -443,13 +501,13 @@ function Harvest.changeCounters(counter)
         Harvest.NumFalseNodes = Harvest.NumFalseNodes + 1
     end
     if counter == "valid" then
-        Harvest.NumbersNodesAdded = Harvest.NumbersNodesAdded + 1
+        Harvest.NumNodesAdded = Harvest.NumNodesAdded + 1
     end
     if counter == "nonfalse" then
         Harvest.NumUnlocalizedFalseNodes = Harvest.NumUnlocalizedFalseNodes + 1
     end
     if counter == "nonvalid" then
-        Harvest.NumbersUnlocalizedNodesAdded = Harvest.NumbersUnlocalizedNodesAdded + 1
+        Harvest.NumUnlocalizedNodesAdded = Harvest.NumUnlocalizedNodesAdded + 1
     end
     if counter == "reject" then
         Harvest.NumRejectedNodes = Harvest.NumRejectedNodes + 1
@@ -458,8 +516,6 @@ end
 
 function Harvest.saveData(type, zone, x, y, profession, nodeName, itemID, scale, counter )
 
-    -- Harvest.saveMapName(zone)
-    
     -- If the map is on the blacklist then don't log it
     if Harvest.blacklistMap(zone) then
         return
@@ -511,14 +567,25 @@ function Harvest.contains(table, value)
     return nil
 end
 
-function Harvest.alreadyFound(type, zone, x, y, profession, nodeName, scale, counter )
-
-    -- If this check is not here the next routine will fail
-    -- after the loading screen because for a brief moment
-    -- the information is not available.
-    if Harvest.savedVars[type] == nil then
-        return
+function Harvest.returnNameFound(table, value)
+    for key, name in pairs(table) do
+        if name == value then
+            return name
+        end
     end
+    return nil
+end
+
+function Harvest.duplicateName(table, value)
+    for key, v in pairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
+function Harvest.alreadyFound(type, zone, x, y, profession, nodeName, scale, counter )
 
     if not Harvest.savedVars[type].data[zone] then
         return false
@@ -535,24 +602,30 @@ function Harvest.alreadyFound(type, zone, x, y, profession, nodeName, scale, cou
         distance = scale
     end
 
+    local dx, dy
     for _, entry in pairs( Harvest.savedVars[type].data[zone][profession] ) do
-
         dx = entry[1] - x
         dy = entry[2] - y
         -- (x - center_x)2 + (y - center_y)2 = r2, where center is the player
         dist = math.pow(dx, 2) + math.pow(dy, 2)
+        dist2 = dx * dx + dy * dy
+        Harvest.Debug(dist .. " : " .. dist2)
         if dist < distance then -- near player location
-            if not Harvest.contains(entry[3], nodeName) then
+            if not Harvest.duplicateName(entry[3], nodeName) then
+                local nodeFound = Harvest.returnNameFound(entry[3], nodeName)
+                if nodeFound ~= nil and Harvest.defaults.debug then
+                    d("Insterted into Node: " .. nodeFound)
+                end
                 table.insert(entry[3], nodeName)
             end
             if Harvest.defaults.debug then
-                d("Node close to its location inserted into : " .. nodeName .. " on : " .. zone .. " x:" .. x .." , y:" .. y .. " for profession " .. profession .. "!")
+                d("Node:" .. nodeName .. " on: " .. zone .. " x:" .. x .." , y:" .. y .. " for profession " .. profession .. " already found!")
             end
             return true
         end
     end
     if Harvest.defaults.debug then
-        d("Node : " .. nodeName .. " on : " .. zone .. " x:" .. x .." , y:" .. y .. " for profession " .. profession .. " not found!")
+        d("Node:" .. nodeName .. " on: " .. zone .. " x:" .. x .." , y:" .. y .. " for profession " .. profession .. " not found!")
     end
     return false
 end
@@ -606,9 +679,12 @@ function Harvest.OnUpdate(time)
                 d("Contextual Info : " .. contextlInfo)
             end
 
+            local myLocation = Harvest.GetMap()
             if Harvest.defaults.verbose then
-                d("Map Name : " .. GetMapName() .. " : texture name : " .. Harvest.GetMap() )
+                d("Map Name : " .. GetMapName() .. " : texture name : " .. myLocation )
             end
+
+            --Harvest.saveMapName(myLocation)
 
             -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale
             -- Track Chest
@@ -661,7 +737,7 @@ function Harvest.IsValidCategory(name)
 end
 
 function Harvest.getTotals(counter)
-    local totalNodes = 0 
+    local totalNodes = 0
     for counterName, counterValue in pairs(counter) do
         totalNodes = totalNodes + counterValue
     end
@@ -683,13 +759,13 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
     end
 
     if #commands == 2 and commands[1] == "import" then
-        Harvest.NumbersNodesAdded = 0
+        Harvest.NumNodesAdded = 0
         Harvest.NumFalseNodes = 0
         Harvest.NumContainerSkipped = 0
-        Harvest.NumbersNodesFiltered = 0
+        Harvest.NumNodesFiltered = 0
         Harvest.NumNodesProcessed = 0
         Harvest.NumUnlocalizedFalseNodes = 0
-        Harvest.NumbersUnlocalizedNodesAdded = 0
+        Harvest.NumUnlocalizedFalseNodes = 0
 
         if commands[2] == "esohead" then
             Harvest.importFromEsohead()
@@ -708,7 +784,7 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
 
     elseif #commands == 2 and commands[1] == "update" then
         if Harvest.IsValidCategory(commands[2]) then
-            Harvest.updateNodes(commands[2])
+            Harvest.updateHarvestNodes(commands[2])
         else
             d("Please enter a valid HarvestMap category to update")
             d("Valid categories are mapinvalid, esonodes, esoinvalid,")
@@ -716,8 +792,12 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
             return
         end
 
+    elseif commands[1] == "check" then
+
+        Harvest.verifyCommonNodes()
+        
     elseif commands[1] == "reset" then
-        if #commands ~= 2 then 
+        if #commands ~= 2 then
             for type,sv in pairs(Harvest.savedVars) do
                 if type ~= "settings" or type ~= "defaults" then
                     Harvest.savedVars[type].data = {}
@@ -725,7 +805,11 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
             end
             d("HarvestMap saved data has been completely reset")
         else
-            if commands[2] ~= "settings" or commands[2] ~= "defaults" or commands[2] ~= "mapnames" then
+            if commands[2] == "defaults" then
+                Harvest.savedVars.settings = Harvest.DefaultConfiguration
+                Harvest.defaults = Harvest.DefaultSettings
+                ReloadUI()
+            elseif commands[2] ~= "settings" or commands[2] ~= "mapnames" then
                 if Harvest.IsValidCategory(commands[2]) then
                     Harvest.savedVars[commands[2]].data = {}
                     d("HarvestMap saved data : " .. commands[2] .. " has been reset")
@@ -822,16 +906,13 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
 end
 
 function Harvest.OnLoad(eventCode, addOnName)
-        Harvest.defaults = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "defaults", { 
-                wideSetting = false, 
-                debug = false,
-                verbose = false,
-                internalVersion = 0, 
-                dataVersion = 0, 
-                language = ""
-        })
 
-        if Harvest.defaults.wideSetting then 
+        Harvest.defaults = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "defaults", Harvest.DefaultSettings )
+        
+        Harvest.minDefault = 0.000001 * Harvest.defaults.minDefault
+        Harvest.minReticleover = 0.000001 * Harvest.defaults.minReticleover
+        
+        if Harvest.defaults.wideSetting then
             Harvest.savedVars = {
                 -- All Localized Nodes
                 ["nodes"]           = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "nodes", Harvest.dataDefault),
@@ -842,26 +923,14 @@ function Harvest.OnLoad(eventCode, addOnName)
                 -- All Invalid Unlocalized Nodes
                 ["esoinvalid"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "esoinvalid", Harvest.dataDefault),
                 -- Map name collection for future versions
-                ["mapnames"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "mapnames", Harvest.dataDefault),
+                --["mapnames"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "mapnames", Harvest.dataDefault),
                 -- All rejected records for debugging
                 -- ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
+                ["harvestmerge"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmerge", Harvest.dataDefault),
+                ["harvestmap"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmap", Harvest.dataDefault),
+                ["comparefalse"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "comparefalse", Harvest.dataDefault),
 
-                ["settings"]    = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 1, "settings", {
-                    filters = {
-                        -- [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true
-                        [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true
-                    },
-                    -- Import filters false by default so they are imported
-                    importFilters = {
-                        [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
-                    },
-                    -- Gather filters true by default so they are gathered
-                    gatherFilters = {
-                        [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
-                    },
-                    mapLayouts = Harvest.defaultMapLayouts,
-                    compassLayouts = Harvest.defaultCompassLayouts
-                })
+                ["settings"]    = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 1, "settings", Harvest.DefaultConfiguration )
             }
         else
             Harvest.savedVars = {
@@ -874,35 +943,23 @@ function Harvest.OnLoad(eventCode, addOnName)
                 -- All Invalid Unlocalized Nodes
                 ["esoinvalid"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "esoinvalid", Harvest.dataDefault),
                 -- Map name collection for future versions
-                ["mapnames"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "mapnames", Harvest.dataDefault),
+                --["mapnames"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "mapnames", Harvest.dataDefault),
                 -- All rejected records for debugging
                 -- ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
+                ["harvestmerge"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmerge", Harvest.dataDefault),
+                ["harvestmap"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmap", Harvest.dataDefault),
+                ["comparefalse"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "comparefalse", Harvest.dataDefault),
 
-                ["settings"]    = ZO_SavedVars:New("Harvest_SavedVars", 1, "settings", {
-                    filters = {
-                        -- [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true
-                        [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true
-                    },
-                    -- Import filters false by default so they are imported
-                    importFilters = {
-                        [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
-                    },
-                    -- Gather filters true by default so they are gathered
-                    gatherFilters = {
-                        [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
-                    },
-                    mapLayouts = Harvest.defaultMapLayouts,
-                    compassLayouts = Harvest.defaultCompassLayouts
-                })
+                ["settings"]    = ZO_SavedVars:New("Harvest_SavedVars", 1, "settings", Harvest.DefaultConfiguration )
             }
         end
 
     Harvest.defaults.language = Harvest.language
 
     if Harvest.defaults.internalVersion < Harvest.internalVersion then
-        Harvest.updateHarvestNodes("data")
-        Harvest.updateHarvestNodes("oldData")
-        Harvest.updateHarvestNodes("oldMapData")
+        Harvest.updateOldHarvestMapNodes("data")
+        Harvest.updateOldHarvestMapNodes("oldData")
+        Harvest.updateOldHarvestMapNodes("oldMapData")
         Harvest.defaults.internalVersion = Harvest.internalVersion
     end
 
@@ -916,7 +973,11 @@ function Harvest.OnLoad(eventCode, addOnName)
 
     Harvest.InitializeMapMarkers()
     Harvest.InitializeCompassMarkers()
-    Harvest.InitializeOptions()
+    EVENT_MANAGER:RegisterForEvent("HarvestMap", EVENT_PLAYER_ACTIVATED,
+    function()
+        Harvest.InitializeOptions()
+        EVENT_MANAGER:UnregisterForEvent("HarvestMap", EVENT_PLAYER_ACTIVATED)
+    end)
 
     EVENT_MANAGER:RegisterForEvent("HarvestMap", EVENT_LOOT_RECEIVED, Harvest.OnLootReceived)
     -- EVENT_MANAGER:RegisterForEvent("HarvestMap", EVENT_LOOT_UPDATED, Harvest.OnLootUpdate)
@@ -928,9 +989,37 @@ function Harvest.Initialize()
     Harvest.dataDefault = {
         data = {}
     }
-    -- Harvest.DataStore = {}
-    Harvest.langs = { "en", "de", "fr", }
+    Harvest.DefaultSettings = {
+        wideSetting = false,
+        debug = false,
+        verbose = false,
+        internalVersion = 0,
+        dataVersion = 0,
+        language = "",
+        minDefault = 25, -- 0.000025 or 0.005^2
+        minReticleover = 49 -- 0.000049 or 0.007^2
+    }
     
+    Harvest.DefaultConfiguration = {
+        compass = true,
+        filters = {
+            -- [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true
+            [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true
+        },
+        -- Import filters false by default so they are imported
+        importFilters = {
+            [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
+        },
+        -- Gather filters true by default so they are gathered
+        gatherFilters = {
+        [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
+        },
+        mapLayouts = Harvest.defaultMapLayouts,
+        compassLayouts = Harvest.defaultCompassLayouts
+    }
+
+    Harvest.langs = { "en", "de", "fr", }
+
     Harvest.minDefault = 0.000025 -- 0.005^2
     Harvest.minDist = 0.000025 -- 0.005^2
     Harvest.minReticleover = 0.000049 -- 0.007^2
@@ -938,14 +1027,16 @@ function Harvest.Initialize()
     Harvest.isHarvesting = false
     Harvest.action = nil
 
-    Harvest.NumbersNodesAdded = 0
+    Harvest.NumNodesAdded = 0
     Harvest.NumFalseNodes = 0
     Harvest.NumContainerSkipped = 0
-    Harvest.NumbersNodesFiltered = 0
+    Harvest.NumNodesFiltered = 0
     Harvest.NumNodesProcessed = 0
     Harvest.NumUnlocalizedFalseNodes = 0
-    Harvest.NumbersUnlocalizedNodesAdded = 0
+    Harvest.NumUnlocalizedNodesAdded = 0
     Harvest.NumRejectedNodes = 0
+    Harvest.nodeNotFound = 0
+    Harvest.nodesToInsert = 0
 
 end
 

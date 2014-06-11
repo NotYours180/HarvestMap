@@ -1,9 +1,50 @@
+## 2.5.8
+
+Minor Update
+- Updated Custom Compass Pins only
+
+## 2.5.7
+
+Bugfix
+- Changed the coefficient from the incorrect value of 0.00001 to 0.000001
+
+With the old value the result would have been 0.00025 and it should be 0.000025.  This would have made some nodes insert into other nodes when they shouldn't have.  I am sorry for the mistake and any nodes lost.  Please restore and import backups using HarvestMerge.  HarvestMerge was unaffected since it did not get the update to have a slider to adjust the range of duplicate nodes.
+
+## 2.5.6
+
+Feature
+- Added slider options so users can fine tune the range at which the nodes are considered duplicate nodes
+This will let users adjust the setting without manually editing files or waiting for me to release a new version with different values.
+
+- Added new slash command "/harvest reset defaults"
+Allows users to reset their settings to the original defaults.  This does not reset nodes or collected data.  If you had AccountWide settings ON you will need to toggle it ON again.
+
+## 2.5.5
+
+Updates
+- Updated localization routines[1][2]
+- Updated auto update routines for when localization has changed
+
+[1] Upon further investigation versions 2.4.7, 2.4.8, and 2.4.9 would not have handled Cgarlorn data correctly due to lack of localization information from Esohead.com.  This has been resolved.  All versions of harvestMap 2.5.0 or newer handle Craglorn data.  HarvestMap will automatically move Craglorn data to the pool of usable data for map pins.
+[2] Upon further investigation HarvestMerge version 0.1.4 had some Craglorn support.  HarvestMerge versions 0.1.5 or newer handle Craglorn data.  HarvestMerge will automatically move Craglorn data to the pool of usable data for importing into HarvestMap.
+
+## 2.5.4
+
+Bugfixes
+- Updates to resolve HarvstMap refreshing pins too frequently [Garkin]
+- Updated Custom Map Pins using data for maps other then the current one [Garkin]
+- changed "Violet Copninus" to correct spelling of "Violet Coprinus"
+
+Updates
+- Verified some Craglorn map names.[1]
+- Updated localization info
+
+[1] It was reported that Craglorn data was made unavailable after 2.4.7.  I could still use backups of HarvestMap.lua from 2.4.0 to 2.4.6 and 2.5.0 or higher.  All versions of HarvestMpa 2.5.0 or higher have proper Craglorn support.  HarvestMap will automatically move Craglorn data to the pool of usable data for map pins.
+
 ## 2.5.3
 
 Bugfix
 - Duplicate node verification was too strict
-
-Note: It was reported that craglorn data was made unavailable after 2.4.7.  I need copies of both the HarvestMap.lua and HarvestMerge.lua files in order to resolve and test the issue correctly.  If you can please PM me with a link to a downloadable file from a website I don't have to register for, I would appreciate it.
 
 ## 2.5.2
 
@@ -20,6 +61,9 @@ Bugfix
 Updates
 - Updated importing routines.  If you use HarvestMerge you will have to update to 0.1.5 in order to import information.
 - Attempted to make counters more accurate.
+- Updated Craglorn Support[1]
+
+[1] It was reported that Craglorn data was made unavailable after 2.4.7.  I could still use backups of HarvestMap.lua from 2.4.0 to 2.4.6 and 2.5.0 or higher.  All versions of HarvestMpa 2.5.0 or higher have proper Craglorn support.  HarvestMap will automatically move Craglorn data to the pool of usable data for map pins.
 
 ## 2.4.9
 
