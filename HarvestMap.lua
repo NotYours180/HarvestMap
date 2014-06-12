@@ -759,7 +759,7 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
         Harvest.NumNodesProcessed = 0
         Harvest.NumUnlocalizedFalseNodes = 0
         Harvest.NumUnlocalizedFalseNodes = 0
-
+        
         if commands[2] == "esohead" then
             Harvest.importFromEsohead()
         elseif commands[2] == "esomerge" then
@@ -917,13 +917,15 @@ function Harvest.OnLoad(eventCode, addOnName)
                 ["esoinvalid"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "esoinvalid", Harvest.dataDefault),
                 -- Map name collection for future versions
                 --["mapnames"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "mapnames", Harvest.dataDefault),
+
+                ["settings"]    = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 1, "settings", Harvest.DefaultConfiguration ),
+
                 -- All rejected records for debugging
-                -- ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
+                ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
                 ["harvestmerge"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmerge", Harvest.dataDefault),
                 ["harvestmap"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmap", Harvest.dataDefault),
                 ["comparefalse"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "comparefalse", Harvest.dataDefault),
-
-                ["settings"]    = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 1, "settings", Harvest.DefaultConfiguration )
+                ["unlocalnode"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "unlocalnode", Harvest.dataDefault)
             }
         else
             Harvest.savedVars = {
@@ -937,13 +939,16 @@ function Harvest.OnLoad(eventCode, addOnName)
                 ["esoinvalid"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "esoinvalid", Harvest.dataDefault),
                 -- Map name collection for future versions
                 --["mapnames"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "mapnames", Harvest.dataDefault),
+
+
+                ["settings"]    = ZO_SavedVars:New("Harvest_SavedVars", 1, "settings", Harvest.DefaultConfiguration ),
+
                 -- All rejected records for debugging
-                -- ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
+                ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
                 ["harvestmerge"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmerge", Harvest.dataDefault),
                 ["harvestmap"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmap", Harvest.dataDefault),
                 ["comparefalse"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "comparefalse", Harvest.dataDefault),
-
-                ["settings"]    = ZO_SavedVars:New("Harvest_SavedVars", 1, "settings", Harvest.DefaultConfiguration )
+                ["unlocalnode"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "unlocalnode", Harvest.dataDefault)
             }
         end
 

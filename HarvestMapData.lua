@@ -1,4 +1,4 @@
-Harvest.SolventNodes = { ["en"] = { "Pure Water", "Water Skin", }, ["de"] = { "Reines Wasser", "Wasserhaut", }, ["fr"] = { "Eau Pure", "Outre d'Eau", }, }
+Harvest.SolventNodes = { ["en"] = { [1] = "Pure Water", [2] = "Water Skin", }, ["de"] = { [1] = "Reines Wasser", [2] = "Wasserhaut", }, ["fr"] = { [1] = "Eau Pure", [2] = "Outre d'Eau", }, }
 Harvest.PotencyRunes = { ["en"] = {"Potency Rune"}, ["de"] = {"Machtrune"}, ["fr"] = {"Rune de Puissance"}, }
 Harvest.EssenceRunes = { ["en"] = {"Essence Rune"}, ["de"] = {"Essenzrune"}, ["fr"] = {"Rune D'essence"}, }
 Harvest.AspectRunes = { ["en"] = {"Aspect Rune"}, ["de"] = {"Aspektrune"}, ["fr"] = {"Rune d'Aspect"}, }
@@ -97,7 +97,7 @@ Harvest.NodeArray = {
         { itemID = 30148, nodeName = { ["en"] = {"Entoloma"}, ["de"] = {"Glöckling"}, ["fr"] = {"Entoloma"} }, itemName = {"Blue Entoloma"} },
         { itemID = 30149, nodeName = { ["en"] = {"Stinkhorn"}, ["de"] = {"Stinkmorchel"}, ["fr"] = {"Mutinus Elégans"} }, itemName = {"Stinkhorn"} },
         { itemID = 30151, nodeName = { ["en"] = {"Emetic Russula"}, ["de"] = {"Brechtäubling"}, ["fr"] = {"Russule Emetique"} }, itemName = {"Emetic Russula"} },
-        { itemID = 30152, nodeName = { ["en"] = {"Violet Coprinus", "Violet Copninus"}, ["de"] = "Violetter Tintling", ["fr"] = {"Violet Coprinus", "Violet Copninus"} }, itemName = {"Violet Coprinus"} },
+        { itemID = 30152, nodeName = { ["en"] = {[1] = "Violet Coprinus", [2] = "Violet Copninus"}, ["de"] = {"Violetter Tintling"}, ["fr"] = {[1] = "Violet Coprinus", [2] = "Violet Copninus"} }, itemName = {"Violet Coprinus"} },
         { itemID = 30153, nodeName = { ["en"] = {"Namira's Rot"}, ["de"] = {"Namiras Fäulnis"}, ["fr"] = {"Truffe de Namira"} }, itemName = {"Namira's Rot"} },
         { itemID = 30154, nodeName = { ["en"] = {"White Cap"}, ["de"] = {"Weißkappe"}, ["fr"] = {"Chapeau Blanc"} }, itemName = {"White Cap"} },
         { itemID = 30155, nodeName = { ["en"] = {"Luminous Russula"}, ["de"] = {"Leuchttäubling"}, ["fr"] = {"Russule Phosphorescente"} }, itemName = {"Luminous Russula"} },
@@ -1034,7 +1034,7 @@ function Harvest.IsValidContainerName(name)
     return false
 end
 
--- Arguments Required ItemID, NodeName
+-- Arguments Required ItemID, nodeName
 -- Returns -1 when Object interacted with is invalid
 -- Valid types: (1)Mining, (2)Clothing, (3)Enchanting
 -- (4)Alchemy, (5)Wood, (6)Chests, (7)Solvents
@@ -1071,7 +1071,7 @@ function Harvest.CheckProfessionTypeOnImport(id, name)
     return isOk
 end
 
--- Arguments Required: NodeName
+-- Arguments Required: nodeName
 -- Returns -1 when Object interacted with is invalid
 -- Valid types: (1)Mining, (2)Clothing, (3)Enchanting
 -- (4)Alchemy, (5)Wood, (7)Solvents
@@ -1117,7 +1117,7 @@ function Harvest.GetProfessionTypeOnUpdate(name)
     return -1
 end
 
--- Arguments Required ItemID, NodeName
+-- Arguments Required ItemID, nodeName
 -- Returns -1 when Object interacted with is invalid
 -- Valid types: (1)Mining, (2)Clothing, (3)Enchanting
 -- (4)Alchemy, (5)Wood, (6)Chests, (7)Solvents
@@ -1177,12 +1177,23 @@ function Harvest.GetItemNameFromItemID(id)
     end
 
     for tsId, tsData in pairs(Harvest.NodeArray) do
-        for prefession, tsNode in pairs(tsData) do
-            if tsNode.nodeName[Harvest.language] ~= nil then
-                for index, nodeName in pairs(tsNode.nodeName[Harvest.language]) do
-                    if tsNode.itemID == id then
-                        name = nodeName
-                        return name
+        for profession, tsNode in pairs(tsData) do
+            for lang, langs in pairs(Harvest.langs) do
+                if tsNode.nodeName[langs] ~= nil then
+                    -- Harvest.Debug(tsNode.nodeName[langs])
+                    -- Harvest.Debug("Saved Count: " .. Harvest.getItemIDFromItemNameIndex)
+                    for index, nodeName in pairs(tsNode.nodeName[langs]) do
+                        -- Harvest.Debug(nodeName)
+                        -- Harvest.Debug(index)
+                        if tsNode.itemID == id then
+                            if profession == 4 and id == 30152 then
+                                Harvest.getItemIDFromItemNameIndex = 1
+                                name = tsNode.nodeName[Harvest.language][Harvest.getItemIDFromItemNameIndex]
+                            else
+                                name = tsNode.nodeName[Harvest.language][Harvest.getItemIDFromItemNameIndex]
+                            end
+                            return name
+                        end
                     end
                 end
             end
@@ -1192,18 +1203,25 @@ function Harvest.GetItemNameFromItemID(id)
 end
 
 function Harvest.GetItemIDFromItemName(name)
+    Harvest.getItemIDFromItemNameIndex = 0
     local itemID
     if name == nil then
         return nil
     end
 
     for tsId, tsData in pairs(Harvest.NodeArray) do
-        for prefession, tsNode in pairs(tsData) do
-            if tsNode.nodeName[Harvest.language] ~= nil then
-                for index, nodeName in pairs(tsNode.nodeName[Harvest.language]) do
-                    if nodeName == name then
-                        itemID = tsNode.itemID
-                        return itemID
+        for profession, tsNode in pairs(tsData) do
+            for lang, langs in pairs(Harvest.langs) do
+                if tsNode.nodeName[langs] ~= nil then
+                    -- Harvest.Debug(tsNode.nodeName[langs])
+                    for index, nodeName in pairs(tsNode.nodeName[langs]) do
+                        -- Harvest.Debug(nodeName)
+                        -- Harvest.Debug(index)
+                        if nodeName == name then
+                            Harvest.getItemIDFromItemNameIndex = index
+                            itemID = tsNode.itemID
+                            return itemID
+                        end
                     end
                 end
             end
