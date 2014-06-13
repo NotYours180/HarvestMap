@@ -234,7 +234,7 @@ function Harvest.OnLootReceived( eventCode, receivedBy, objectName, stackCount, 
     local zone, x, y = Harvest.GetLocation()
     link = Harvest.ItemLinkParse( objectName )
     if Harvest.defaults.debug then
-        d("Item Name: " .. Harvest.FormatString(link.name) .. " : ItemID : " .. tostring(link.id) )
+        Harvest.Debug("Item Name: " .. Harvest.FormatString(link.name) .. " : itemID : " .. tostring(link.id) )
     end
 
     -- if link.id is nil Harvest.GetProfessionType will fail
@@ -717,6 +717,8 @@ Harvest.validCategories = {
     "mapinvalid",
     "esonodes",
     "esoinvalid",
+    "unlocalnode",
+    "rejected",
 }
 
 function Harvest.IsValidCategory(name)
@@ -918,9 +920,6 @@ function Harvest.OnLoad(eventCode, addOnName)
 
                 -- All rejected records for debugging
                 ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
-                ["harvestmerge"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmerge", Harvest.dataDefault),
-                ["harvestmap"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmap", Harvest.dataDefault),
-                ["comparefalse"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "comparefalse", Harvest.dataDefault),
                 ["unlocalnode"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "unlocalnode", Harvest.dataDefault)
             }
         else
@@ -941,9 +940,6 @@ function Harvest.OnLoad(eventCode, addOnName)
 
                 -- All rejected records for debugging
                 ["rejected"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "rejected", Harvest.dataDefault),
-                ["harvestmerge"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmerge", Harvest.dataDefault),
-                ["harvestmap"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "harvestmap", Harvest.dataDefault),
-                ["comparefalse"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "comparefalse", Harvest.dataDefault),
                 ["unlocalnode"]      = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "unlocalnode", Harvest.dataDefault)
             }
         end
@@ -1033,8 +1029,6 @@ function Harvest.Initialize()
     Harvest.NumUnlocalizedFalseNodes = 0
     Harvest.NumUnlocalizedNodesAdded = 0
     Harvest.NumRejectedNodes = 0
-    Harvest.nodeNotFound = 0
-    Harvest.nodesToInsert = 0
 
 end
 

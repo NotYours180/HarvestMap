@@ -18,20 +18,11 @@ Harvest.NodeArray = {
     },
     -- : Clothing
     [2] = {
-        { itemID = 793, nodeName = {}, itemName = {"Rawhide Scraps"} },
-        { itemID = 800, nodeName = {}, itemName = {"Superb Hide Scraps"} },
         { itemID = 812, nodeName = { ["en"] = {"Jute"}, ["de"] = {"Jute"}, ["fr"] = {"Jute"} }, itemName = {"Raw jute"} },--V
-        { itemID = 4448, nodeName = {}, itemName = {"Hide Scraps"} },
         { itemID = 4464, nodeName = { ["en"] = {"Flax"}, ["de"] = {"Flachs"}, ["fr"] = {"Lin"} }, itemName = {"Raw Flax"} },--V
-        { itemID = 4478, nodeName = {}, itemName = {"Shadowhide Scraps"} },
-        { itemID = 6020, nodeName = {}, itemName = {"Thick Leather Scraps"} },
-        { itemID = 23095, nodeName = {}, itemName = {"Leather Scraps"} },
-        { itemID = 23097, nodeName = {}, itemName = {"Fell Hide Scraps"} },
         { itemID = 23129, nodeName = { ["en"] = {"Cotton"}, ["de"] = {"Baumwolle"}, ["fr"] = {"Coton"} }, itemName = {"Raw Cotton"} },--V
         { itemID = 23130, nodeName = { ["en"] = {"Spidersilk"}, ["de"] = {"Spinnenseide"}, ["fr"] = {"Toile D'araignée"} }, itemName = {"Raw Spidersilk"} },
         { itemID = 23131, nodeName = { ["en"] = {"Ebonthread"}, ["de"] = {"Ebenseide"}, ["fr"] = {"Fil d'Ebonite"} }, itemName = {"Raw Ebonthread"} },
-        { itemID = 23142, nodeName = {}, itemName = {"Topgrain Hide Scraps"} },
-        { itemID = 23143, nodeName = {}, itemName = {"Iron Hide Scraps"} },
         { itemID = 33217, nodeName = { ["en"] = {"Kreshweed"}, ["de"] = {"Kreshweed"}, ["fr"] = {"Kreshweed"} }, itemName = {"Raw Kreshweed"} },
         { itemID = 33218, nodeName = { ["en"] = {"Ironweed"}, ["de"] = {"Eisenkraut"}, ["fr"] = {"Herbe de fer"} }, itemName = {"Raw ironweed"} },
         { itemID = 33219, nodeName = { ["en"] = {"Silverweed"}, ["de"] = {"Silverweed"}, ["fr"] = {"Silverweed"} }, itemName = {"Raw Silverweed"} },
@@ -157,20 +148,11 @@ Harvest.professions = {
     },
     -- : Clothing
     [2] = {
-        793,
-        800,
         812,
-        4448,
         4464,
-        4478,
-        6020,
-        23095,
-        23097,
         23129,
         23130,
         23131,
-        23142,
-        23143,
         33217,
         33218,
         33219,
@@ -1034,7 +1016,7 @@ function Harvest.IsValidContainerName(name)
     return false
 end
 
--- Arguments Required ItemID, nodeName
+-- Arguments Required itemID, nodeName
 -- Returns -1 when Object interacted with is invalid
 -- Valid types: (1)Mining, (2)Clothing, (3)Enchanting
 -- (4)Alchemy, (5)Wood, (6)Chests, (7)Solvents
@@ -1117,7 +1099,7 @@ function Harvest.GetProfessionTypeOnUpdate(name)
     return -1
 end
 
--- Arguments Required ItemID, nodeName
+-- Arguments Required itemID, nodeName
 -- Returns -1 when Object interacted with is invalid
 -- Valid types: (1)Mining, (2)Clothing, (3)Enchanting
 -- (4)Alchemy, (5)Wood, (6)Chests, (7)Solvents
@@ -1149,7 +1131,7 @@ function Harvest.GetProfessionType(id, name)
         return tsId
     end
 
-    -- if no valid Node Name by Name is found use ItemID
+    -- if no valid Node Name by Name is found use itemID
     for key1, tsData in pairs(Harvest.professions) do
         for key2, value in pairs(tsData) do
             if value == id then
@@ -1173,6 +1155,7 @@ end
 function Harvest.GetItemNameFromItemID(id)
     local name
     if id == nil then
+        Harvest.Debug("Returned Nil because id was Nil!")
         return nil
     end
 
@@ -1203,9 +1186,9 @@ function Harvest.GetItemNameFromItemID(id)
 end
 
 function Harvest.GetItemIDFromItemName(name)
-    Harvest.getItemIDFromItemNameIndex = 0
     local itemID
     if name == nil then
+        Harvest.Debug("Returned Nil because name was Nil!")
         return nil
     end
 
@@ -1229,6 +1212,22 @@ function Harvest.GetItemIDFromItemName(name)
     end
     return nil
 end
+
+function Harvest.GetTradeskillByMaterial(id)
+    id = tonumber(id)
+    for tsId, tsData in pairs(Harvest.NodeArray) do
+        for profession, tsNode in pairs(tsData) do
+            if tsNode.itemID ~= nil then
+                if tsNode.itemID == id then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+
 
 -- local alliance = GetUnitAlliance("player")
 -- valid alliance values are:
