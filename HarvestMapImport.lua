@@ -94,14 +94,17 @@ function Harvest.translateNodeName(nodeName, itemID)
 end
 
 function Harvest.newMapNilItemIDHarvest(newMapName, x, y, profession, nodeName)
-    if not Harvest.GetTradeskillByMaterial(id) then
-        Harvest.Debug("it was false!")
-        Harvest.Debug(itemID)
+    local itemID
+    if nodeName ~= nil then
+        itemID = HarvestMerge.GetItemIDFromItemName(nodeName) 
+    end
+    
+    if not Harvest.GetTradeskillByMaterial(itemID) then
         return
     end
 
     if profession <= 8 then
-        nodeName, itemID = Harvest.translateNodeName(nodeName, nil)
+        nodeName, itemID = HarvestMerge.translateNodeName(nodeName, itemID)
         -- Harvest.Debug("Result ----")
         -- Harvest.Debug("itemIDFound")
         -- Harvest.Debug(itemID)
@@ -139,8 +142,17 @@ function Harvest.newMapNilItemIDHarvest(newMapName, x, y, profession, nodeName)
 end
 
 function Harvest.oldMapNilItemIDHarvest(oldMapName, x, y, profession, nodeName)
+    local itemID
+    if nodeName ~= nil then
+        itemID = HarvestMerge.GetItemIDFromItemName(nodeName) 
+    end
+    
+    if not Harvest.GetTradeskillByMaterial(itemID) then
+        return
+    end
+
     if profession <= 8 then
-        nodeName, itemID = Harvest.translateNodeName(nodeName, nil)
+        nodeName, itemID = HarvestMerge.translateNodeName(nodeName, itemID)
         -- Harvest.Debug("Result ----")
         -- Harvest.Debug("itemIDFound")
         -- Harvest.Debug(itemID)
