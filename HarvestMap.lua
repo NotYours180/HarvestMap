@@ -785,10 +785,6 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
             return
         end
 
-    elseif commands[1] == "check" then
-
-        Harvest.verifyCommonNodes()
-        
     elseif commands[1] == "reset" then
         if #commands ~= 2 then
             for type,sv in pairs(Harvest.savedVars) do
