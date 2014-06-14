@@ -1152,6 +1152,64 @@ function Harvest.GetProfessionType(id, name)
     return -1
 end
 
+-- Always set Harvest.getItemIDFromItemNameIndex when determining the node name
+function Harvest.translateNodeName(name)
+    for tsId, tsData in pairs(Harvest.NodeArray) do
+        for profession, tsNode in pairs(tsData) do
+            for lang, langs in pairs(Harvest.langs) do
+                if tsNode.nodeName[langs] ~= nil then
+                    -- Harvest.Debug(tsNode.nodeName[langs])
+                    for index, nodeName in pairs(tsNode.nodeName[langs]) do
+                        -- Harvest.Debug(nodeName)
+                        -- Harvest.Debug(index)
+                        if nodeName == name then
+                            if profession == 4 and tsNode.itemID == 30152 then
+                                Harvest.getItemIDFromItemNameIndex = 1
+                                name = tsNode.nodeName[Harvest.language][Harvest.getItemIDFromItemNameIndex]
+                            else
+                                Harvest.getItemIDFromItemNameIndex = index
+                                name = tsNode.nodeName[Harvest.language][Harvest.getItemIDFromItemNameIndex]
+                            end
+                            return name
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- Always set Harvest.getItemIDFromItemNameIndex when determining the node name
+function Harvest.GetItemIDFromItemName(name)
+    local itemID
+    if name == nil then
+        Harvest.Debug("Returned Nil because name was Nil!")
+        return nil
+    end
+
+    for tsId, tsData in pairs(Harvest.NodeArray) do
+        for profession, tsNode in pairs(tsData) do
+            for lang, langs in pairs(Harvest.langs) do
+                if tsNode.nodeName[langs] ~= nil then
+                    -- Harvest.Debug(tsNode.nodeName[langs])
+                    for index, nodeName in pairs(tsNode.nodeName[langs]) do
+                        -- Harvest.Debug(nodeName)
+                        -- Harvest.Debug(index)
+                        if nodeName == name then
+                            Harvest.getItemIDFromItemNameIndex = index
+                            itemID = tsNode.itemID
+                            return itemID
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- Harvest.getItemIDFromItemNameIndex when determining the node name
 function Harvest.GetItemNameFromItemID(id)
     local name
     if id == nil then
@@ -1185,35 +1243,7 @@ function Harvest.GetItemNameFromItemID(id)
     return nil
 end
 
-function Harvest.GetItemIDFromItemName(name)
-    local itemID
-    if name == nil then
-        Harvest.Debug("Returned Nil because name was Nil!")
-        return nil
-    end
-
-    for tsId, tsData in pairs(Harvest.NodeArray) do
-        for profession, tsNode in pairs(tsData) do
-            for lang, langs in pairs(Harvest.langs) do
-                if tsNode.nodeName[langs] ~= nil then
-                    -- Harvest.Debug(tsNode.nodeName[langs])
-                    for index, nodeName in pairs(tsNode.nodeName[langs]) do
-                        -- Harvest.Debug(nodeName)
-                        -- Harvest.Debug(index)
-                        if nodeName == name then
-                            Harvest.getItemIDFromItemNameIndex = index
-                            itemID = tsNode.itemID
-                            return itemID
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return nil
-end
-
-function Harvest.GetTradeskillByMaterial(id)
+function Harvest.checkForValidNodeID(id)
     id = tonumber(id)
     for tsId, tsData in pairs(Harvest.NodeArray) do
         for profession, tsNode in pairs(tsData) do
@@ -1226,8 +1256,6 @@ function Harvest.GetTradeskillByMaterial(id)
     end
     return false
 end
-
-
 
 -- local alliance = GetUnitAlliance("player")
 -- valid alliance values are:

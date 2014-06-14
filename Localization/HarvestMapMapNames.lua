@@ -683,7 +683,7 @@ function Harvest.updateHarvestNodes(type)
                         elseif node[4] == nil then
                             Harvest.newMapNilItemIDHarvest(newMapName, node[1], node[2], profession, nodeName)
                         elseif node[4] ~= nil then -- node[4] which is the itemID should not be nil at this point
-                            if Harvest.GetTradeskillByMaterial(node[4]) then
+                            if Harvest.checkForValidNodeID(node[4]) then
                                 Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, nodeName, node[4])
                             end
                         else
@@ -704,7 +704,7 @@ function Harvest.updateHarvestNodes(type)
                         elseif node[4] == nil then
                             Harvest.oldMapNilItemIDHarvest(oldMapName, node[1], node[2], profession, nodeName)
                         elseif node[4] ~= nil then -- node[4] which is the itemID should not be nil at this point
-                            if Harvest.GetTradeskillByMaterial(node[4]) then
+                            if Harvest.checkForValidNodeID(node[4]) then
                                 Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, nodeName, node[4])
                             end
                         else
@@ -748,7 +748,7 @@ function Harvest.updateOldHarvestMapNodes(type)
                         elseif node[4] == nil then
                             Harvest.newMapNilItemIDHarvest(newMapName, node[1], node[2], profession, nodeName)
                         elseif node[4] ~= nil then -- node[4] which is the itemID should not be nil at this point
-                            if Harvest.GetTradeskillByMaterial(node[4]) then
+                            if Harvest.checkForValidNodeID(node[4]) then
                                 Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, nodeName, node[4])
                             end
                         else
@@ -769,7 +769,7 @@ function Harvest.updateOldHarvestMapNodes(type)
                         elseif node[4] == nil then
                             Harvest.oldMapNilItemIDHarvest(oldMapName, node[1], node[2], profession, nodeName)
                         elseif node[4] ~= nil then -- node[4] which is the itemID should not be nil at this point
-                            if Harvest.GetTradeskillByMaterial(node[4]) then
+                            if Harvest.checkForValidNodeID(node[4]) then
                                 Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, nodeName, node[4])
                             end
                         else

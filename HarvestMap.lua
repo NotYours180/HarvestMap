@@ -505,6 +505,9 @@ function Harvest.changeCounters(counter)
     if counter == "reject" then
         Harvest.NumRejectedNodes = Harvest.NumRejectedNodes + 1
     end
+    if counter == "insert" then
+        Harvest.NumInsertedNodes = Harvest.NumInsertedNodes + 1
+    end
 end
 
 function Harvest.saveData(type, zone, x, y, profession, nodeName, itemID, scale, counter )
@@ -605,11 +608,11 @@ function Harvest.alreadyFound(type, zone, x, y, profession, nodeName, scale, cou
         -- Harvest.Debug(dist .. " : " .. dist2)
         if dist < distance then -- near player location
             if not Harvest.duplicateName(entry[3], nodeName) then
-                local nodeFound = Harvest.returnNameFound(entry[3], nodeName)
-                if nodeFound ~= nil and Harvest.defaults.debug then
-                    d("Insterted into Node: " .. nodeFound)
+                if Harvest.defaults.debug then
+                    Harvest.Debug(nodeName .. " : insterted into existing Node")
                 end
                 table.insert(entry[3], nodeName)
+                Harvest.changeCounters("insert")
             end
             if Harvest.defaults.debug then
                 d("Node:" .. nodeName .. " on: " .. zone .. " x:" .. x .." , y:" .. y .. " for profession " .. profession .. " already found!")
@@ -1029,6 +1032,7 @@ function Harvest.Initialize()
     Harvest.NumUnlocalizedFalseNodes = 0
     Harvest.NumUnlocalizedNodesAdded = 0
     Harvest.NumRejectedNodes = 0
+    Harvest.NumInsertedNodes = 0
 
 end
 
