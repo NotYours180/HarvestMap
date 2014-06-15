@@ -1,3 +1,14 @@
+## 2.6.0
+
+Updates
+- Added Node Name translation.[1]
+
+Bugfix
+- Updated how HarvestMap handles different nodes in the same location.[2]
+
+[1] This prevents the tooltip from having the node name in each language and translating two from German or French to english.
+[2] For example High Iron Ore, Orichalcum Ore and Calcinium Ore spawning in the same spot.  The tooltip should properly reflect the nodes that have spawned it its location.
+
 ## 2.5.9
 
 Minor Update

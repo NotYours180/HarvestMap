@@ -1152,18 +1152,31 @@ function Harvest.GetProfessionType(id, name)
     return -1
 end
 
--- Always set Harvest.getItemIDFromItemNameIndex when determining the node name
+-- Harvest.getItemIDFromItemNameIndex does not need to be set before
+-- calling this because we are not determining the Node Name or Node ID
+-- based on only one of the new pieces of information.  Instead we
+-- are looking for the node name and then assigning the result to be
+-- the name found in the language of the client software
 function Harvest.translateNodeName(name)
+    if name == nil then
+        Harvest.Debug("Returned Nil because name was Nil! For translateNodeName")
+        return nil
+    end
+
     for tsId, tsData in pairs(Harvest.NodeArray) do
+        -- profession turns out to be the count of which row you are on in the profession section
         for profession, tsNode in pairs(tsData) do
+            --Harvest.Debug("profession : " .. profession)
+            --Harvest.Debug(tsNode)
             for lang, langs in pairs(Harvest.langs) do
+                --Harvest.Debug("lang index : " .. lang)
+                --Harvest.Debug("lang value : " .. langs)
                 if tsNode.nodeName[langs] ~= nil then
-                    -- Harvest.Debug(tsNode.nodeName[langs])
                     for index, nodeName in pairs(tsNode.nodeName[langs]) do
-                        -- Harvest.Debug(nodeName)
-                        -- Harvest.Debug(index)
+                        --Harvest.Debug("index : " .. index)
+                        --Harvest.Debug("nodeName : " .. nodeName)
                         if nodeName == name then
-                            if profession == 4 and tsNode.itemID == 30152 then
+                            if tsNode.itemID == 30152 then
                                 Harvest.getItemIDFromItemNameIndex = 1
                                 name = tsNode.nodeName[Harvest.language][Harvest.getItemIDFromItemNameIndex]
                             else
@@ -1184,18 +1197,22 @@ end
 function Harvest.GetItemIDFromItemName(name)
     local itemID
     if name == nil then
-        Harvest.Debug("Returned Nil because name was Nil!")
+        Harvest.Debug("Returned Nil because name was Nil! For GetItemIDFromItemName")
         return nil
     end
 
     for tsId, tsData in pairs(Harvest.NodeArray) do
+        -- profession turns out to be the count of which row you are on in the profession section
         for profession, tsNode in pairs(tsData) do
+            --Harvest.Debug("profession : " .. profession)
+            --Harvest.Debug(tsNode)
             for lang, langs in pairs(Harvest.langs) do
+                --Harvest.Debug("lang index : " .. lang)
+                --Harvest.Debug("lang value : " .. langs)
                 if tsNode.nodeName[langs] ~= nil then
-                    -- Harvest.Debug(tsNode.nodeName[langs])
                     for index, nodeName in pairs(tsNode.nodeName[langs]) do
-                        -- Harvest.Debug(nodeName)
-                        -- Harvest.Debug(index)
+                        --Harvest.Debug("index : " .. index)
+                        --Harvest.Debug("nodeName : " .. nodeName)
                         if nodeName == name then
                             Harvest.getItemIDFromItemNameIndex = index
                             itemID = tsNode.itemID
@@ -1209,12 +1226,55 @@ function Harvest.GetItemIDFromItemName(name)
     return nil
 end
 
--- Harvest.getItemIDFromItemNameIndex when determining the node name
+-- The is called before using Harvest.GetItemNameFromItemID to
+-- assign whether or not it was Pure Water or a Water Skin
+function Harvest.setItemIndex(name)
+    if name == nil then
+        Harvest.Debug("Returned Nil because name was Nil! For GetItemIDFromItemName")
+        return nil
+    end
+
+    for tsId, tsData in pairs(Harvest.NodeArray) do
+        -- profession turns out to be the count of which row you are on in the profession section
+        for profession, tsNode in pairs(tsData) do
+            --Harvest.Debug("profession : " .. profession)
+            --Harvest.Debug(tsNode)
+            for lang, langs in pairs(Harvest.langs) do
+                --Harvest.Debug("lang index : " .. lang)
+                --Harvest.Debug("lang value : " .. langs)
+                if tsNode.nodeName[langs] ~= nil then
+                    for index, nodeName in pairs(tsNode.nodeName[langs]) do
+                        --Harvest.Debug("index : " .. index)
+                        --Harvest.Debug("nodeName : " .. nodeName)
+                        if nodeName == name then
+                            if tsNode.itemID == 30152 then
+                                Harvest.getItemIDFromItemNameIndex = 1
+                            else
+                                Harvest.getItemIDFromItemNameIndex = index
+                            end
+                            return
+                        end
+                    end
+                end
+            end
+        end
+    end
+    Harvest.Debug("Node name not found, setting Harvest.getItemIDFromItemNameIndex to 1")
+    Harvest.getItemIDFromItemNameIndex = 1
+end
+
+-- Harvest.getItemIDFromItemNameIndex should be set before calling this,
+-- so that the name is assigned properly from the table when there
+-- is more then one Node Name like Pure Water and Water Skin
 function Harvest.GetItemNameFromItemID(id)
     local name
     if id == nil then
-        Harvest.Debug("Returned Nil because id was Nil!")
+        Harvest.Debug("Returned Nil because id was Nil! For GetItemNameFromItemID")
         return nil
+    end
+
+    if Harvest.getItemIDFromItemNameIndex < 1 then
+        Harvest.getItemIDFromItemNameIndex = 1
     end
 
     for tsId, tsData in pairs(Harvest.NodeArray) do
@@ -1227,7 +1287,7 @@ function Harvest.GetItemNameFromItemID(id)
                         -- Harvest.Debug(nodeName)
                         -- Harvest.Debug(index)
                         if tsNode.itemID == id then
-                            if profession == 4 and id == 30152 then
+                            if id == 30152 then
                                 Harvest.getItemIDFromItemNameIndex = 1
                                 name = tsNode.nodeName[Harvest.language][Harvest.getItemIDFromItemNameIndex]
                             else

@@ -141,10 +141,10 @@ function Harvest.InitializeOptions()
 
     LAM:AddCheckbox(panelID, "HarvestMapCompass", Harvest.localization[ "compass" ], Harvest.localization[ "compasstooltip" ],
         function()
-            return Harvest.savedVars["settings"].compass
+            return Harvest.defaults.compass
         end,
         function( value )
-            Harvest.savedVars["settings"].compass = value
+            Harvest.defaults.compass = value
             COMPASS_PINS:RefreshPins()
         end,
         false, nil)
@@ -250,7 +250,7 @@ local lastContext
 function Harvest.RefreshFilterCheckboxes()
    --check which checkboxes will be shown, so you do not need to update everything
    local context = GetMapContentType() == MAP_CONTENT_AVA --true if pvp context
-   local checkboxes = context and newPVPCheckboxes or newPVECheckboxes 
+   local checkboxes = context and newPVPCheckboxes or newPVECheckboxes
    --do not refresh checkboxes if map context is not changed
    if context ~= lastContext then
       lastContext = context

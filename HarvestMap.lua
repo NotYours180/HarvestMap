@@ -764,7 +764,7 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
         Harvest.NumNodesProcessed = 0
         Harvest.NumUnlocalizedFalseNodes = 0
         Harvest.NumUnlocalizedFalseNodes = 0
-        
+
         if commands[2] == "esohead" then
             Harvest.importFromEsohead()
         elseif commands[2] == "esomerge" then
@@ -902,10 +902,10 @@ end
 function Harvest.OnLoad(eventCode, addOnName)
 
         Harvest.defaults = ZO_SavedVars:NewAccountWide("Harvest_SavedVars", 2, "defaults", Harvest.DefaultSettings )
-        
+
         Harvest.minDefault = 0.000001 * Harvest.defaults.minDefault
         Harvest.minReticleover = 0.000001 * Harvest.defaults.minReticleover
-        
+
         if Harvest.defaults.wideSetting then
             Harvest.savedVars = {
                 -- All Localized Nodes
@@ -990,15 +990,15 @@ function Harvest.Initialize()
         wideSetting = false,
         debug = false,
         verbose = false,
+        compass = true,
         internalVersion = 0,
         dataVersion = 0,
         language = "",
         minDefault = 25, -- 0.000025 or 0.005^2
         minReticleover = 49 -- 0.000049 or 0.007^2
     }
-    
+
     Harvest.DefaultConfiguration = {
-        compass = true,
         filters = {
             -- [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true
             [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true
