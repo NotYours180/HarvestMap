@@ -1,40 +1,20 @@
-function Harvest.newMapNameFishChest(type, newMapName, x, y)
+function Harvest.saveFishChestNode(type, mapName, x, y)
     -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale 9) counter
     if type == "fish" then
         if not Harvest.savedVars["settings"].importFilters[ Harvest.fishID ] then
-            Harvest.saveData("nodes", newMapName, x, y, Harvest.fishID, type, nil, Harvest.minReticleover, "valid" )
+            Harvest.saveData("nodes", mapName, x, y, Harvest.fishID, type, nil, Harvest.minReticleover, "valid" )
         else
             Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
         end
     elseif type == "chest" then
         if not Harvest.savedVars["settings"].importFilters[ Harvest.chestID ] then
-            Harvest.saveData("nodes", newMapName, x, y, Harvest.chestID, type, nil, Harvest.minReticleover, "valid" )
+            Harvest.saveData("nodes", mapName, x, y, Harvest.chestID, type, nil, Harvest.minReticleover, "valid" )
         else
             Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
         end
     else
-        Harvest.Debug("Harvest : newMapName : unsupported type : " .. type)
-        Harvest.saveData("rejected", newMapName, x, y, -1, type, nil, Harvest.minReticleover, "reject" )
-    end
-end
-
-function Harvest.oldMapNameFishChest(type, oldMapName, x, y)
-    -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale 9) counter
-    if type == "fish" then
-        if not Harvest.savedVars["settings"].importFilters[ Harvest.fishID ] then
-            Harvest.saveData("esonodes", oldMapName, x, y, Harvest.fishID, type, nil, Harvest.minReticleover, "nonvalid" )
-        else
-            Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
-        end
-    elseif type == "chest" then
-        if not Harvest.savedVars["settings"].importFilters[ Harvest.chestID ] then
-            Harvest.saveData("esonodes", oldMapName, x, y, Harvest.chestID, type, nil, Harvest.minReticleover, "nonvalid" )
-        else
-            Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
-        end
-    else
-        Harvest.Debug("Harvest : oldMapName : unsupported type : " .. type)
-        Harvest.saveData("rejected", oldMapName, x, y, -1, type, nil, Harvest.minReticleover, "reject" )
+        Harvest.Debug("Harvest : " .. mapName .. " : unsupported type : " .. type)
+        Harvest.saveData("rejected", mapName, x, y, -1, type, nil, Harvest.minReticleover, "reject" )
     end
 end
 
@@ -63,32 +43,25 @@ function Harvest.correctItemIDandNodeName(nodeName, itemID)
     return nodeName, itemID
 end
 
-function Harvest.newMapItemIDHarvest(newMapName, x, y, profession, nodeName, itemID)
-    local professionFound = 0
-    professionFound = Harvest.GetProfessionTypeOnUpdate(nodeName) -- Get Profession by name only
-    if professionFound <= 0 then
-        professionFound = Harvest.GetProfessionType(itemID, nodeName)
-    elseif professionFound <= 0 then
-        professionFound = profession
-    end
-    if professionFound < 1 or professionFound > 8 then
-        Harvest.saveData("rejected", newMapName, x, y, professionFound, nodeName, itemID, nil, "reject" )
-        return
-    end
+-- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
+-- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
+-- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
+function Harvest.saveHarvestNode(mapName, x, y, profession, nodeName, itemID)
 
-    -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale
-    if not Harvest.IsValidContainerName(nodeName) then -- returns true or false
-        if not Harvest.savedVars["settings"].importFilters[ professionFound ] then
-            Harvest.saveData("nodes", newMapName, x, y, professionFound, nodeName, itemID, nil, "valid" )
-        else
-            Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
+    if itemID ~= nil then
+        if Harvest.checkForValidNodeID(itemID) then
+            return
         end
-    else
-        Harvest.NumContainerSkipped = Harvest.NumContainerSkipped + 1
     end
-end
 
-function Harvest.oldMapItemIDHarvest(oldMapName, x, y, profession, nodeName, itemID)
+    nodeName, itemID = Harvest.correctItemIDandNodeName(nodeName, itemID)
+
+    if nodeName == nil itemID ~= nil then
+        Harvest.saveData("unlocalnode", mapName, x, y, profession, "NilNodeName", itemID, nil, "reject" )
+    elseif nodeName ~= nil itemID == nil then
+        Harvest.saveData("unlocalnode", mapName, x, y, profession, nodeName, 0, nil, "reject" )
+    end
+
     local professionFound = 0
     professionFound = Harvest.GetProfessionTypeOnUpdate(nodeName) -- Get Profession by name only
     if professionFound <= 0 then
@@ -97,14 +70,14 @@ function Harvest.oldMapItemIDHarvest(oldMapName, x, y, profession, nodeName, ite
         professionFound = profession
     end
     if professionFound < 1 or professionFound > 8 then
-        Harvest.saveData("rejected", oldMapName, x, y, professionFound, nodeName, itemID, nil, "reject" )
+        Harvest.saveData("rejected", mapName, x, y, professionFound, nodeName, itemID, nil, "reject" )
         return
     end
 
     -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale
     if not Harvest.IsValidContainerName(nodeName) then -- returns true or false
         if not Harvest.savedVars["settings"].importFilters[ professionFound ] then
-            Harvest.saveData("nodes", oldMapName, x, y, professionFound, nodeName, itemID, nil, "valid" )
+            Harvest.saveData("nodes", mapName, x, y, professionFound, nodeName, itemID, nil, "valid" )
         else
             Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
         end
@@ -154,14 +127,8 @@ function Harvest.importFromEsohead()
         if newMapName then
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
-                        Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
-                        -- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
-                        node[4], node[5] = Harvest.correctItemIDandNodeName(node[4], node[5])
-                        -- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
-                        -- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
-                    if Harvest.checkForValidNodeID(node[5]) then
-                        Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, node[4], node[5])
-                    end
+                    Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
+                    Harvest.saveHarvestNode(newMapName, node[1], node[2], profession, node[4], node[5])
                 end
             end
         else -- << New Map Name NOT found
@@ -169,14 +136,8 @@ function Harvest.importFromEsohead()
             Harvest.Debug(oldMapName .. " could not be localized.  Saving to oldData!")
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
-                        Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
-                        -- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
-                        node[4], node[5] = Harvest.correctItemIDandNodeName(node[4], node[5])
-                        -- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
-                        -- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
-                    if Harvest.checkForValidNodeID(node[5]) then
-                        Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, node[4], node[5])
-                    end
+                    Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
+                    Harvest.saveHarvestNode(oldMapName, node[1], node[2], profession, node[4], node[5])
                 end
             end
         end
@@ -190,14 +151,14 @@ function Harvest.importFromEsohead()
             for _, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.newMapNameFishChest("chest", newMapName, node[1], node[2])
+                Harvest.saveFishChestNode("chest", newMapName, node[1], node[2])
             end
         else -- << New Map Name NOT found
             Harvest.Debug(map .. " could not be localized.  Saving to oldData!")
             for v1, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.oldMapNameFishChest("chest", map, node[1], node[2])
+                Harvest.saveFishChestNode("chest", map, node[1], node[2])
             end
         end
     end
@@ -210,14 +171,14 @@ function Harvest.importFromEsohead()
             for _, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.newMapNameFishChest("fish", newMapName, node[1], node[2])
+                Harvest.saveFishChestNode("fish", newMapName, node[1], node[2])
             end
         else -- << New Map Name NOT found
             Harvest.Debug(map .. " could not be localized.  Saving to oldData!")
             for v1, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.oldMapNameFishChest("fish", map, node[1], node[2])
+                Harvest.saveFishChestNode("fish", map, node[1], node[2])
             end
         end
     end
@@ -276,14 +237,8 @@ function Harvest.importFromEsoheadMerge()
         if newMapName then
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
-                        Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
-                        -- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
-                        node[4], node[5] = Harvest.correctItemIDandNodeName(node[4], node[5])
-                        -- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
-                        -- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
-                    if Harvest.checkForValidNodeID(node[5]) then
-                        Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, node[4], node[5])
-                    end
+                    Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
+                    Harvest.saveHarvestNode(newMapName, node[1], node[2], profession, node[4], node[5])
                 end
             end
         else -- << New Map Name NOT found
@@ -291,14 +246,8 @@ function Harvest.importFromEsoheadMerge()
             Harvest.Debug(oldMapName .. " could not be localized.  Saving to oldData!")
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
-                        Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
-                        -- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
-                        node[4], node[5] = Harvest.correctItemIDandNodeName(node[4], node[5])
-                        -- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
-                        -- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
-                    if Harvest.checkForValidNodeID(node[5]) then
-                        Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, node[4], node[5])
-                    end
+                    Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
+                    Harvest.saveHarvestNode(oldMapName, node[1], node[2], profession, node[4], node[5])
                 end
             end
         end
@@ -312,14 +261,14 @@ function Harvest.importFromEsoheadMerge()
             for _, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.newMapNameFishChest("chest", newMapName, node[1], node[2])
+                Harvest.saveFishChestNode("chest", newMapName, node[1], node[2])
             end
         else -- << New Map Name NOT found
             d(map .. " could not be localized.  Saving to oldData!")
             for v1, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.oldMapNameFishChest("chest", map, node[1], node[2])
+                Harvest.saveFishChestNode("chest", map, node[1], node[2])
             end
         end
     end
@@ -332,14 +281,14 @@ function Harvest.importFromEsoheadMerge()
             for _, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.newMapNameFishChest("fish", newMapName, node[1], node[2])
+                Harvest.saveFishChestNode("fish", newMapName, node[1], node[2])
             end
         else -- << New Map Name NOT found
             d(map .. " could not be localized.  Saving to oldData!")
             for v1, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.oldMapNameFishChest("fish", map, node[1], node[2])
+                Harvest.saveFishChestNode("fish", map, node[1], node[2])
             end
         end
     end
@@ -398,14 +347,8 @@ function Harvest.importFromHarvester()
         if newMapName then
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
-                        Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
-                        -- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
-                        node[4], node[5] = Harvest.correctItemIDandNodeName(node[4], node[5])
-                        -- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
-                        -- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
-                    if Harvest.checkForValidNodeID(node[5]) then
-                        Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, node[4], node[5])
-                    end
+                    Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
+                    Harvest.saveHarvestNode(newMapName, node[1], node[2], profession, node[4], node[5])
                 end
             end
         else -- << New Map Name NOT found
@@ -413,14 +356,8 @@ function Harvest.importFromHarvester()
             Harvest.Debug(oldMapName .. " could not be localized.  Saving to oldData!")
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
-                        Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
-                        -- [1], [2] = X/Y, [3] = Stack Size, [4] = nodeName, [5] = itemID
-                        node[4], node[5] = Harvest.correctItemIDandNodeName(node[4], node[5])
-                        -- Harvest.Debug(node[1] .. " : " .. node[2] .. " : " .. profession .. " : " .. node[5])
-                        -- [1] map name [2], [3] = X/Y, [4] profession [5] nodeName [6] itemID
-                    if Harvest.checkForValidNodeID(node[5]) then
-                        Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, node[4], node[5])
-                    end
+                    Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
+                    Harvest.saveHarvestNode(oldMapName, node[1], node[2], profession, node[4], node[5])
                 end
             end
         end
@@ -434,14 +371,14 @@ function Harvest.importFromHarvester()
             for _, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.newMapNameFishChest("chest", newMapName, node[1], node[2])
+                Harvest.saveFishChestNode("chest", newMapName, node[1], node[2])
             end
         else -- << New Map Name NOT found
             d(map .. " could not be localized.  Saving to oldData!")
             for v1, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.oldMapNameFishChest("chest", map, node[1], node[2])
+                Harvest.saveFishChestNode("chest", map, node[1], node[2])
             end
         end
     end
@@ -454,14 +391,14 @@ function Harvest.importFromHarvester()
             for _, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.newMapNameFishChest("fish", newMapName, node[1], node[2])
+                Harvest.saveFishChestNode("fish", newMapName, node[1], node[2])
             end
         else -- << New Map Name NOT found
             d(map .. " could not be localized.  Saving to oldData!")
             for v1, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
-                Harvest.oldMapNameFishChest("fish", map, node[1], node[2])
+                Harvest.saveFishChestNode("fish", map, node[1], node[2])
             end
         end
     end
@@ -505,17 +442,12 @@ function Harvest.importFromHarvestMerge()
             for index, node in pairs(nodes) do
                 Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                 for contents, nodeName in ipairs(node[3]) do
-                    -- [1], [2] = X/Y, [3] = Node Names, [4] = itemID
-                    if (nodeName) ~= "chest" and (nodeName) ~= "fish" then
-                        nodeName, node[4] = Harvest.correctItemIDandNodeName(nodeName, node[4])
-                    end
 
+                    -- [1], [2] = X/Y, [3] = Node Names, [4] = itemID
                     if (nodeName) == "chest" or (nodeName) == "fish" then
-                        Harvest.newMapNameFishChest(nodeName, newMapName, node[1], node[2])
+                        Harvest.saveFishChestNode(nodeName, newMapName, node[1], node[2])
                     else
-                        if Harvest.checkForValidNodeID(node[4]) then
-                            Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, nodeName, node[4])
-                        end
+                        Harvest.saveHarvestNode(newMapName, node[1], node[2], profession, nodeName, node[4])
                     end
 
                 end
