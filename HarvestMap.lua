@@ -968,6 +968,10 @@ function Harvest.OnLoad(eventCode, addOnName)
         Harvest.defaults.internalVersion = Harvest.internalVersion
     end
 
+    if Harvest.defaults.dataVersion ~= Harvest.dataVersion then
+        Harvest.defaults.dataVersion = Harvest.dataVersion
+    end
+
     Harvest.InitializeMapMarkers()
     Harvest.InitializeCompassMarkers()
     EVENT_MANAGER:RegisterForEvent("HarvestMap", EVENT_PLAYER_ACTIVATED,

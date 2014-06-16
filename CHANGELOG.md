@@ -1,3 +1,10 @@
+## 2.6.1
+
+Bugfix
+- Fixed bug that allowed containers from Esohead.lua files to be added as Solvent nodes.[1]
+
+[1]The easiest way to fix this is to use your HarvestMerge data and import into HarvestMap with the solvent filters ON.  Then turn the filters back OFF when you import other Esohead.lua files.  You will only loose the valid "Pure Water" nodes but those are very easy to find.  Once you import the HarvestMerge with the filters on, I would reset your HarvestMerge data and import from HarvestMap so you don't import the solvent nodes again in the future.
+
 ## 2.6.0
 
 Updates
