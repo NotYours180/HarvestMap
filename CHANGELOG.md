@@ -1,3 +1,17 @@
+## 2.6.3
+
+Feature
+- Added Map filters[1]
+
+[1]Map filters are organized by Alliance.  These filters do not apply to gathering, only importing.
+
+This is the initial release of this new feature but it does the job quite well.  If you would like to leave feedback on the new filter please be specific about the change or update you would like.  Understand that I don't want to make a large list of maps and only filter certain things when a bunch of conditions are met.
+
+## 2.6.2
+
+Bugfix
+- Fixed bug that caused an exception when importing with debug mode on
+
 ## 2.6.1
 
 Bugfix

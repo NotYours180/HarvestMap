@@ -210,6 +210,167 @@ function Harvest.InitializeOptions()
         CreateColorPicker( profession )
     end
 
+    LAM:AddHeader(panelID, "HarvestMapFilterAldmeri", "Aldmeri Dominion Map Filters")
+    LAM:AddCheckbox(panelID, "AuridonMapFilter", "Auridon Map Filter", "Enable filtering for Auridon",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "auridon" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "auridon" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "GrahtwoodMapFilter", "Grahtwood Map Filter", "Enable filtering for Grahtwood",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "grahtwood" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "grahtwood" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "GreenshadeMapFilter", "Greenshade Map Filter", "Enable filtering for Greenshade",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "greenshade" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "greenshade" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "MalabalTorMapFilter", "Malabal Tor Map Filter", "Enable filtering for Malabal Tor",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "malabaltor" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "malabaltor" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "ReapersMarchMapFilter", "Reaper's March Tor Map Filter", "Enable filtering for Reaper's March",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "reapersmarch" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "reapersmarch" ] = value
+        end,
+    false, nil)
+
+    LAM:AddHeader(panelID, "HarvestMapFilterDaggerfall", "Daggerfall Covenant Map Filters")
+    LAM:AddCheckbox(panelID, "AlikrDesertFilter", "Alik'r Desert Filter", "Enable filtering for Alik'r Desert",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "alikr" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "alikr" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "BangkoraiDesertFilter", "Bangkorai Map Filter", "Enable filtering for Bangkorai",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "bangkorai" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "bangkorai" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "GlenumbraMapFilter", "Glenumbra Map Filter", "Enable filtering for Glenumbra",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "glenumbra" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "glenumbra" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "RivenspireMapFilter", "Rivenspire Map Filter", "Enable filtering for Rivenspire",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "rivenspire" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "rivenspire" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "StormhavenMapFilter", "Stormhaven Map Filter", "Enable filtering for Stormhaven",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "stormhaven" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "stormhaven" ] = value
+        end,
+    false, nil)
+
+    LAM:AddHeader(panelID, "HarvestMapFilterEbonheart", "Ebonheart Pact Map Filters")
+    LAM:AddCheckbox(panelID, "DeshaanMapFilter", "Deshaan Map Filter", "Enable filtering for Deshaan",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "deshaan" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "deshaan" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "EastmarchMapFilter", "Eastmarch Map Filter", "Enable filtering for Eastmarch",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "eastmarch" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "eastmarch" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "ShadowfenMapFilter", "Shadowfen Map Filter", "Enable filtering for Shadowfen",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "shadowfen" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "shadowfen" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "StonefallsMapFilter", "Stonefalls Map Filter", "Enable filtering for Stonefalls",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "stonefalls" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "stonefalls" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "TheRiftMapFilter", "The Rift Map Filter", "Enable filtering for The Rift",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "therift" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "therift" ] = value
+        end,
+    false, nil)
+
+    LAM:AddHeader(panelID, "HarvestMapFilterOther", "Other Map Filters")
+
+    LAM:AddCheckbox(panelID, "CraglornMapFilter", "Craglorn Map Filter", "Enable filtering for Craglorn",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "craglorn" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "craglorn" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "ColdharborMapFilter", "Coldharbor Map Filter", "Enable filtering for Coldharbor",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "coldharbor" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "coldharbor" ] = value
+        end,
+    false, nil)
+    LAM:AddCheckbox(panelID, "CyrodiilMapFilter", "Cyrodiil Map Filter", "Enable filtering for Cyrodiil",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "cyrodiil" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "cyrodiil" ] = value
+        end,
+    false, nil)
+    -- LAM:AddCheckbox(panelID, "CitiesFilter", "Cities Map Filters", "Enable filtering for City Maps",
+    --     function()
+    --         return Harvest.savedVars["settings"].mapnameFilters[ "cities" ]
+    --     end,
+    --     function( value )
+    --         Harvest.savedVars["settings"].mapnameFilters[ "cities" ] = value
+    --     end,
+    -- false, nil)
+    
     LAM:AddHeader(panelID, "HarvestDebugHeader", "Debug")
 
     LAM:AddCheckbox(panelID, "HarvestMapDebug", "Debug mode", "Enable debug mode",

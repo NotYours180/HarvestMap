@@ -181,7 +181,7 @@ Harvest.mapSystem = {
     ["bangkorai/ephesus_base"] = {"Ephesus"},
     ["rivenspire/erokii_base"] = {"Erokii Ruins"},
     ["bangkorai/evermore_base"] = {"Evermore","Immerfort^N,in","Abondance^F",},
-    ["guildmaps/eyevea_base"] = {"Eyevea"},
+    ["eyevea/eyevea_base"] = {"Eyevea"},
     ["auridon/ezduiin_base"] = {"Ezduiin Undercroft"},
     ["greenshade/shroudedhollowcenter_base"] = {"Fading Tree"},
     ["therift/ebonmeretower_base"] = {"Faldar's Tooth"},
@@ -626,6 +626,29 @@ function Harvest.blacklistMap(mapName)
     return false
 end
 
+Harvest.cityMapList = {
+    "tamriel/tamriel"
+}
+
+function Harvest.filteredCityMapCheck(mapName)
+    for _, mapFound in pairs(Harvest.cityMapList) do
+        if mapFound == mapName then
+            return true
+        end
+    end
+    return false
+end
+
+function Harvest.filteredMapCheck(mapName)
+    local world, subzone = select(3,mapName:find("([%w%-]+)/([_%w%-]+)"))
+    
+    if Harvest.savedVars["settings"].mapnameFilters[ world ] then
+        Harvest.changeCounters("mapfiltered")
+        return true
+    end
+    return false
+end
+
 function Harvest.GetNewMapName(mapName)
     local result = nil  -- No map found yet
 
@@ -677,12 +700,11 @@ function Harvest.updateHarvestNodes(type)
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
                     for contents, nodeName in ipairs(node[3]) do
-
                         -- [1], [2] = X/Y, [3] = Node Names, [4] = itemID
                         if (nodeName) == "chest" or (nodeName) == "fish" then
-                            Harvest.saveFishChestNode(nodeName, newMapName, node[1], node[2])
+                            Harvest.newMapNameFishChest(nodeName, newMapName, node[1], node[2])
                         else
-                            Harvest.saveHarvestNode(newMapName, node[1], node[2], profession, nodeName, node[4])
+                            Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, nodeName, node[4])
                         end
 
                     end
@@ -693,14 +715,12 @@ function Harvest.updateHarvestNodes(type)
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
                     for contents, nodeName in ipairs(node[3]) do
-
                         -- [1], [2] = X/Y, [3] = Node Names, [4] = itemID
                         if (nodeName) == "chest" or (nodeName) == "fish" then
-                            Harvest.saveFishChestNode(nodeName, oldMapName, node[1], node[2])
+                            Harvest.oldMapNameFishChest(nodeName, oldMapName, node[1], node[2])
                         else
-                            Harvest.saveHarvestNode(oldMapName, node[1], node[2], profession, nodeName, node[4])
+                            Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, nodeName, node[4])
                         end
-
                     end
                 end
             end
@@ -732,12 +752,11 @@ function Harvest.updateOldHarvestMapNodes(type)
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
                     for contents, nodeName in ipairs(node[3]) do
-
                         -- [1], [2] = X/Y, [3] = Node Names, [4] = itemID
                         if (nodeName) == "chest" or (nodeName) == "fish" then
-                            Harvest.saveFishChestNode(nodeName, newMapName, node[1], node[2])
+                            Harvest.newMapNameFishChest(nodeName, newMapName, node[1], node[2])
                         else
-                            Harvest.saveHarvestNode(newMapName, node[1], node[2], profession, nodeName, node[4])
+                            Harvest.newMapItemIDHarvest(newMapName, node[1], node[2], profession, nodeName, node[4])
                         end
 
                     end
@@ -748,14 +767,12 @@ function Harvest.updateOldHarvestMapNodes(type)
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
                     for contents, nodeName in ipairs(node[3]) do
-
                         -- [1], [2] = X/Y, [3] = Node Names, [4] = itemID
                         if (nodeName) == "chest" or (nodeName) == "fish" then
-                            Harvest.saveFishChestNode(nodeName, oldMapName, node[1], node[2])
+                            Harvest.oldMapNameFishChest(nodeName, oldMapName, node[1], node[2])
                         else
-                            Harvest.saveHarvestNode(oldMapName, node[1], node[2], profession, nodeName, node[4])
+                            Harvest.oldMapItemIDHarvest(oldMapName, node[1], node[2], profession, nodeName, node[4])
                         end
-
                     end
                 end
             end

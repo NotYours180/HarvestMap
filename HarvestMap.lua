@@ -3,7 +3,7 @@ Harvest.chestID = 6
 Harvest.fishID = 8
 
 Harvest.internalVersion = 3
-Harvest.dataVersion = 5
+Harvest.dataVersion = 6
 
 -----------------------------------------
 --           Debug Logger              --
@@ -356,6 +356,12 @@ function Harvest.GetMap()
         Harvest.minDist = 0.000025 -- This is the default value for minDist
     end
 
+    if textureName == "eyevea_base" then
+        worldMapName = GetUnitZone("player")
+        worldMapName = string.lower(worldMapName)
+        textureName = worldMapName .. "/" .. textureName
+    end
+
     return textureName
 end
 
@@ -507,6 +513,9 @@ function Harvest.changeCounters(counter)
     end
     if counter == "insert" then
         Harvest.NumInsertedNodes = Harvest.NumInsertedNodes + 1
+    end
+    if counter == "mapfiltered" then
+        Harvest.NumMapFiltered = Harvest.NumMapFiltered + 1
     end
 end
 
@@ -763,7 +772,10 @@ SLASH_COMMANDS["/harvest"] = function (cmd)
         Harvest.NumNodesFiltered = 0
         Harvest.NumNodesProcessed = 0
         Harvest.NumUnlocalizedFalseNodes = 0
-        Harvest.NumUnlocalizedFalseNodes = 0
+        Harvest.NumUnlocalizedNodesAdded = 0
+        Harvest.NumRejectedNodes = 0
+        Harvest.NumInsertedNodes = 0
+        Harvest.NumMapFiltered = 0
 
         if commands[2] == "esohead" then
             Harvest.importFromEsohead()
@@ -1012,8 +1024,29 @@ function Harvest.Initialize()
         [0] = false, [1] = false, [2] = false, [3] = false, [4] = false, [5] = false, [6] = false, [7] = false, [8] = false
         },
         mapLayouts = Harvest.defaultMapLayouts,
-        compassLayouts = Harvest.defaultCompassLayouts
-    }
+        compassLayouts = Harvest.defaultCompassLayouts,
+        mapnameFilters = {
+            ["alikr"] = false,          --Alik'r Desert
+            ["auridon"] = false,        --Auridon, Khenarthi's Roost
+            ["bangkorai"] = false,      --Bangkorai
+            ["coldharbor"] = false,     --Coldharbour
+            ["craglorn"] = false,       --Craglorn
+            ["cyrodiil"] = false,       --Cyrodiil
+            ["deshaan"] = false,        --"Deshaan"
+            ["eastmarch"] = false,      --Eastmarch
+            ["glenumbra"] = false,      --Glenumbra, Betnikh, Stros M'Kai
+            ["grahtwood"] = false,      --Grahtwood
+            ["greenshade"] = false,     --Greenshade
+            ["malabaltor"] = false,     --Malabal Tor
+            ["reapersmarch"] = false,   --Reaper's March
+            ["rivenspire"] = false,     --Rivenspire
+            ["shadowfen"] = false,      --Shadowfen
+            ["stonefalls"] = false,     --Stonefalls, Bal Foyen, Bleakrock Isle
+            ["stormhaven"] = false,     --Stormhaven
+            ["therift"] = false,        --The Rift
+            ["cities"] = false,         --City Filters
+        }
+}
 
     Harvest.langs = { "en", "de", "fr", }
 
@@ -1033,6 +1066,7 @@ function Harvest.Initialize()
     Harvest.NumUnlocalizedNodesAdded = 0
     Harvest.NumRejectedNodes = 0
     Harvest.NumInsertedNodes = 0
+    Harvest.NumMapFiltered = 0
 
 end
 
