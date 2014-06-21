@@ -100,7 +100,7 @@ function Harvest.newMapItemIDHarvest(newMapName, x, y, profession, nodeName, ite
                 Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
             end
         else
-            HarvestMerge.saveData("mapinvalid", newMapName, x, y, professionFound, nodeName, itemID, nil, "false" )
+            Harvest.saveData("mapinvalid", newMapName, x, y, professionFound, nodeName, itemID, nil, "false" )
             Harvest.NumFalseNodes = Harvest.NumFalseNodes + 1
         end
     else
@@ -145,7 +145,7 @@ function Harvest.oldMapItemIDHarvest(oldMapName, x, y, profession, nodeName, ite
                 Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
             end
         else
-            HarvestMerge.saveData("esoinvalid", oldMapName, x, y, professionFound, nodeName, itemID, nil, "nonfalse" )
+            Harvest.saveData("esoinvalid", oldMapName, x, y, professionFound, nodeName, itemID, nil, "nonfalse" )
             Harvest.NumFalseNodes = Harvest.NumFalseNodes + 1
         end
     else
@@ -542,8 +542,8 @@ function Harvest.importFromHarvestMerge()
         return
     end
 
-    if HarvestMerge.internal.internalVersion < 4 then
-        Harvest.Debug("Please upgrade to HarvestMerge 0.2.4 or newer to import data!")
+    if HarvestMerge.internal.internalVersion < 5 then
+        Harvest.Debug("Please upgrade to HarvestMerge 0.2.7 or newer to import data!")
         return
     end
     Harvest.Debug("Starting import from HarvestMerge")
