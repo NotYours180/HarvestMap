@@ -76,10 +76,14 @@ function Harvest.saveHarvestNode(mapName, x, y, profession, nodeName, itemID)
 
     -- 1) type 2) map name 3) x 4) y 5) profession 6) nodeName 7) itemID 8) scale
     if not Harvest.IsValidContainerName(nodeName) then -- returns true or false
-        if not Harvest.savedVars["settings"].importFilters[ professionFound ] then
-            Harvest.saveData("nodes", mapName, x, y, professionFound, nodeName, itemID, nil, "valid" )
+        if not Harvest.CheckProfessionTypeOnImport(itemID, nodeName)
+            if not Harvest.savedVars["settings"].importFilters[ professionFound ] then
+                Harvest.saveData("nodes", mapName, x, y, professionFound, nodeName, itemID, nil, "valid" )
+            else
+                Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
+            end
         else
-            Harvest.NumNodesFiltered = Harvest.NumNodesFiltered + 1
+            Harvest.NumFalseNodes = Harvest.NumFalseNodes + 1
         end
     else
         Harvest.NumContainerSkipped = Harvest.NumContainerSkipped + 1
