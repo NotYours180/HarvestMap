@@ -43,13 +43,18 @@ function Harvest.correctItemIDandNodeName(nodeName, itemID)
     if Harvest.IsValidContainerName(nodeName) then
         return nodeName, itemID
     end
-
-    Harvest.setItemIndex(nodeName)
+    
+    if nodeName ~= nil then
+        Harvest.setItemIndex(nodeName)
+    end
 
     if nodeName == nil and itemID ~= nil then
         nodeName = Harvest.GetItemNameFromItemID(itemID)
+        Harvest.setItemIndex(nodeName)
         nodeUpdated = true
-    elseif nodeName ~= nil and itemID == nil then
+    end
+    
+    if nodeName ~= nil and itemID == nil then
         itemID = Harvest.GetItemIDFromItemName(nodeName)
     end
 
@@ -109,19 +114,19 @@ function Harvest.newMapItemIDHarvest(newMapName, x, y, profession, nodeName, ite
 end
 
 function Harvest.oldMapItemIDHarvest(oldMapName, x, y, profession, nodeName, itemID)
-
     if itemID ~= nil then
         if not Harvest.checkForValidNodeID(itemID) then
             return
         end
     end
-
     nodeName, itemID = Harvest.correctItemIDandNodeName(nodeName, itemID)
 
     if nodeName == nil and itemID ~= nil then
         Harvest.saveData("unlocalnode", oldMapName, x, y, profession, "NilNodeName", itemID, nil, "reject" )
+        return
     elseif nodeName ~= nil and itemID == nil then
         Harvest.saveData("unlocalnode", oldMapName, x, y, profession, nodeName, 0, nil, "reject" )
+        return
     end
 
     local professionFound = 0
