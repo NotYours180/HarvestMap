@@ -672,17 +672,17 @@ function Harvest.OnUpdate(time)
             if Harvest.defaults.verbose and nodeName ~= nil then
                 d("Node Name : " .. nodeName)
             end
-            if Harvest.defaults.verbose and blockedNode ~= nil then
-                if blockedNode then
-                    d("blockedNode : Is True")
-                end
-            end
-            if Harvest.defaults.verbose and additionalInfo ~= nil then
-                d("Additional Info : " .. additionalInfo)
-            end
-            if Harvest.defaults.verbose and contextlInfo ~= nil then
-                d("Contextual Info : " .. contextlInfo)
-            end
+            -- if Harvest.defaults.verbose and blockedNode ~= nil then
+            --     if blockedNode then
+            --         d("blockedNode : Is True")
+            --     end
+            -- end
+            -- if Harvest.defaults.verbose and additionalInfo ~= nil then
+            --     d("Additional Info : " .. additionalInfo)
+            -- end
+            -- if Harvest.defaults.verbose and contextlInfo ~= nil then
+            --     d("Contextual Info : " .. contextlInfo)
+            -- end
 
             local myLocation = Harvest.GetMap()
             if Harvest.defaults.verbose then

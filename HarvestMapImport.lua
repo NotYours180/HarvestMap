@@ -198,7 +198,7 @@ function Harvest.importFromEsohead()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for profession, nodes in pairs(data) do
                     for index, node in pairs(nodes) do
                         Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
@@ -229,7 +229,7 @@ function Harvest.importFromEsohead()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for _, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                     -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
@@ -251,7 +251,7 @@ function Harvest.importFromEsohead()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for _, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                     -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
@@ -322,7 +322,7 @@ function Harvest.importFromEsoheadMerge()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for profession, nodes in pairs(data) do
                     for index, node in pairs(nodes) do
                         Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
@@ -353,7 +353,7 @@ function Harvest.importFromEsoheadMerge()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for _, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                     -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
@@ -375,7 +375,7 @@ function Harvest.importFromEsoheadMerge()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for _, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                     -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
@@ -446,7 +446,7 @@ function Harvest.importFromHarvester()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for profession, nodes in pairs(data) do
                     for index, node in pairs(nodes) do
                         Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
@@ -477,7 +477,7 @@ function Harvest.importFromHarvester()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for _, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                     -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
@@ -499,7 +499,7 @@ function Harvest.importFromHarvester()
         Harvest.Debug("import data from "..map)
         newMapName = Harvest.GetNewMapName(map)
         if newMapName then
-            if not Harvest.filteredMapCheck(newMapName) then
+            if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
                 for _, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1
                     -- 1) map name 2) x 3) y 4) profession 5) nodeName 6) itemID
@@ -553,7 +553,7 @@ function Harvest.importFromHarvestMerge()
     end
     Harvest.Debug("Starting import from HarvestMerge")
     for newMapName, data in pairs(HarvestMerge.savedVars["nodes"].data) do
-        if not Harvest.filteredMapCheck(newMapName) then
+        if not Harvest.filteredMapCheck(newMapName) and not Harvest.filteredCityMapCheck(newMapName) then
             for profession, nodes in pairs(data) do
                 for index, node in pairs(nodes) do
                     Harvest.NumNodesProcessed = Harvest.NumNodesProcessed + 1

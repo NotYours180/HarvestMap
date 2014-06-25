@@ -627,13 +627,38 @@ function Harvest.blacklistMap(mapName)
 end
 
 Harvest.cityMapList = {
-    "tamriel/tamriel"
+    --Alik'r Desert
+    --Auridon, Khenarthi's Roost
+    --Bangkorai
+    --Coldharbour
+    "coldharbor/hollowcity_base",
+    --Craglorn
+    --Cyrodiil
+    --"Deshaan"
+    "deshaan/mournhold_base",
+    --Eastmarch
+    --Glenumbra, Betnikh, Stros M'Kai
+    --Grahtwood
+    --Greenshade
+    --Malabal Tor
+    --Reaper's March
+    --Rivenspire
+    --Shadowfen
+    --Stonefalls, Bal Foyen, Bleakrock Isle
+    "stonefalls/davonswatch_base",
+    "stonefalls/ebonheart_base",
+    "stonefalls/kragenmoor_base",
+    --Stormhaven
+    --The Rift
 }
 
 function Harvest.filteredCityMapCheck(mapName)
-    for _, mapFound in pairs(Harvest.cityMapList) do
-        if mapFound == mapName then
-            return true
+    if Harvest.savedVars["settings"].mapnameFilters[ "cities" ] then
+        for _, mapFound in pairs(Harvest.cityMapList) do
+            if mapFound == mapName then
+                Harvest.changeCounters("mapfiltered")
+                return true
+            end
         end
     end
     return false

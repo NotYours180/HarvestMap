@@ -362,14 +362,14 @@ function Harvest.InitializeOptions()
             Harvest.savedVars["settings"].mapnameFilters[ "cyrodiil" ] = value
         end,
     false, nil)
-    -- LAM:AddCheckbox(panelID, "CitiesFilter", "Cities Map Filters", "Enable filtering for City Maps",
-    --     function()
-    --         return Harvest.savedVars["settings"].mapnameFilters[ "cities" ]
-    --     end,
-    --     function( value )
-    --         Harvest.savedVars["settings"].mapnameFilters[ "cities" ] = value
-    --     end,
-    -- false, nil)
+    LAM:AddCheckbox(panelID, "CitiesFilter", "Cities Map Filters", "Enable filtering for City Maps",
+        function()
+            return Harvest.savedVars["settings"].mapnameFilters[ "cities" ]
+        end,
+        function( value )
+            Harvest.savedVars["settings"].mapnameFilters[ "cities" ] = value
+        end,
+    false, nil)
     
     LAM:AddHeader(panelID, "HarvestDebugHeader", "Debug")
 
