@@ -1,7 +1,7 @@
 ## Title: HarvestMap
 ## Author: Shinni and Sharlikran
-## Version: 2.6.3
-## APIVersion: 100004
+## Version: 2.6.5
+## APIVersion: 100007
 ## OptionalDependsOn: LibAddonMenu-1.0
 ## SavedVariables: Harvest_SavedVars
 

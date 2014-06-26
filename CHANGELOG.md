@@ -1,3 +1,14 @@
+## 2.6.5
+
+Updates
+- Changed version number
+
+## 2.6.4
+
+Updates
+- Changed version number
+- Added disclaimer to Readme as requested by Zenimax
+
 ## 2.6.3
 
 Feature
